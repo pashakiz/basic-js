@@ -15,8 +15,11 @@ export default function getSeason(date) {
   if (!date)
     return 'Unable to determine the time of year!'
 
-  if (typeof date.getMonth !== 'function')
-    throw new Error('Invalid date!')
+  try {
+    date.getTime()
+  } catch (error) {
+    throw new Error ('Invalid date!')
+  }
 
   let season = 'unknown'
   switch (date.getMonth()) {
