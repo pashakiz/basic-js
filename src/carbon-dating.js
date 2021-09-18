@@ -1,7 +1,9 @@
 import { NotImplementedError } from '../extensions/index.js';
 
-const MODERN_ACTIVITY = 15;
-const HALF_LIFE_PERIOD = 5730;
+const MODERN_ACTIVITY = 15
+const HALF_LIFE_PERIOD = 5730
+const K = 0.693 / HALF_LIFE_PERIOD
+//const K = Math.log(2) / HALF_LIFE_PERIOD
 
 /**
  * Determine the age of archeological find by using
@@ -17,15 +19,20 @@ const HALF_LIFE_PERIOD = 5730;
  * dateSample('WOOT!') => false
  *
  */
+
+const isValidVal = (v) => (0 < v && v < MODERN_ACTIVITY)
+
 export default function dateSample(sampleActivity) {
+  const x = parseFloat(sampleActivity)
+
   if (typeof sampleActivity !== 'string')
     return false
 
-  let x = +sampleActivity.trim()
-
-  if (sampleActivity === '' || x === NaN || x < 0)
+  if (sampleActivity === '' || Number.isNaN(x))
     return false
 
-  let res = Math.ceil(Math.log(MODERN_ACTIVITY / x) / (Math.log(2) / HALF_LIFE_PERIOD))
-  return (res && res > 0 && res < Infinity) ? res : false
+  if (!isValidVal(x))
+    return false
+
+  return Math.ceil(Math.log(MODERN_ACTIVITY / x) / K)
 }
