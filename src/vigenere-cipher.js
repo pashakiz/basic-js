@@ -1,5 +1,3 @@
-import { NotImplementedError } from '../extensions/index.js';
-
 /**
  * Implement class VigenereCipheringMachine that allows us to create
  * direct and reverse ciphering machines according to task description
@@ -30,45 +28,33 @@ export default class VigenereCipheringMachine {
       throw Error('Incorrect arguments!')
   }
 
-  encrypt(message, key) {
+  ciphering(message, key, mode) {
     this.validate(message, key)
     message = message.toUpperCase()
     key = key.toUpperCase()
-    let cipher = ''
+    let res = ''
     let j = 0
-    //let maxlength = Math.max(message.length, key.length)
     for (let i = 0; i < message.length; i++) {
       if (message[i].match(/[A-Z]/)) {
         let iMes = this.a.indexOf(message[i])
         let iKey = this.a.indexOf(key[(j >= key.length ? j % key.length : j)])
-        cipher += this.a[(iMes + iKey) % this.a.length]
+        if (mode === 'encrypt')
+          res += this.a[(iMes + iKey) % this.a.length]
+        if (mode === 'decrypt')
+          res += this.a[(iMes + this.a.length - iKey) % this.a.length]
         j++
-        //continue
       } else {
-        cipher += message[i]
+        res += message[i]
       }
 
     }
-    return this.reverse ? cipher.split('').reverse().join('') : cipher
+    return this.reverse ? res.split('').reverse().join('') : res
+  }
+
+  encrypt(message, key) {
+    return this.ciphering(message, key, 'encrypt')
   }
   decrypt(cipher, key) {
-    this.validate(cipher, key)
-    cipher = cipher.toUpperCase()
-    key = key.toUpperCase()
-    let message = ''
-    let j = 0
-    //let maxlength = Math.max(cipher.length, key.length)
-    for (let i = 0; i < cipher.length; i++) {
-      if (cipher[i].match(/[A-Z]/)) {
-        let iMes = this.a.indexOf(cipher[i])
-        let iKey = this.a.indexOf(key[(j >= key.length ? j % key.length : j)])
-        message += this.a[(iMes + this.a.length - iKey) % this.a.length]
-        j++
-        //continue
-      } else {
-        message += cipher[i]
-      }
-    }
-    return this.reverse ? message.split('').reverse().join('') : message
+    return this.ciphering(cipher, key, 'decrypt')
   }
 }
